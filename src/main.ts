@@ -1,9 +1,3 @@
-/**
- * This template is a production ready boilerplate for developing with `PlaywrightCrawler`.
- * Use this to bootstrap your projects using the most up-to-date code.
- * If you're looking for examples or want to learn more, see README.
- */
-
 import { Actor, ProxyConfiguration } from 'apify';
 import { PlaywrightCrawler } from 'crawlee';
 import { createGoogleHotelsRouter } from './routes.js';
@@ -19,6 +13,14 @@ interface Input extends GoogleHotelsOptions {
 await Actor.init();
 
 const input = await Actor.getInput<Input>() ?? {} as Input;
+
+// validate inputs format
+if (input.checkInDate.match(/^\d{4}-\d{2}-\d{2}$/) === null) {
+    throw new Error('Invalid check-in date format. Use YYYY-MM-DD.');
+}
+if (input.checkOutDate.match(/^\d{4}-\d{2}-\d{2}$/) === null) {
+    throw new Error('Invalid check-out date format. Use YYYY-MM-DD.');
+}
 
 const {
     searchQuery,
