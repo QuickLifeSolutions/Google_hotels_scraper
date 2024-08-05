@@ -18,6 +18,8 @@ export interface GoogleHotelItemData {
 export const getHotelItemData = async (page: Page, log: Log): Promise<GoogleHotelItemData> => {
     const title = await page.locator('h1[role="heading"]').last().innerText();
 
+    const url = page.url();
+
     const pricesTab = await page.waitForSelector('div[id="prices"]');
     const reviewsTab = await page.waitForSelector('div[id="reviews"]');
     const photosTab = await page.waitForSelector('div[id="photos"]');
@@ -101,7 +103,7 @@ export const getHotelItemData = async (page: Page, log: Log): Promise<GoogleHote
 
     return {
         thumbnail,
-        url: page.url(),
+        url,
         title,
         website,
         address,
