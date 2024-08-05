@@ -3,10 +3,13 @@
 	"name": "google-hotels-scraper",
 	"title": "Google Hotels Scraper",
 	"description": "Google Hotels Scraper is an actor for extracting data about hotels from Google search results.",
-	"version": "0.0",
+	"version": "0.1",
 	"meta": {
 		"templateId": "ts-crawlee-playwright-chrome"
 	},
 	"input": "./input_schema.json",
+    "storages": {
+        "dataset": "./dataset_schema.json"
+    },
 	"dockerfile": "./Dockerfile"
 }

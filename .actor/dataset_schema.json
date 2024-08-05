@@ -1,0 +1,44 @@
+{
+    "actorSpecification": 1,
+    "fields": {},
+    "views": {
+        "hotels": {
+            "title": "Overview",
+            "description": "Overview of all scraped hotels",
+            "transformation": {
+                "fields": [
+                    "title",
+                    "address",
+                    "rating",
+                    "reviews",
+                    "url"
+                ]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "title": {
+                        "label": "Hotel name",
+                        "format": "text"
+                    },
+                    "address": {
+                        "label": "Address",
+                        "format": "text"
+                    },
+                    "rating": {
+                        "label": "Rating",
+                        "format": "text"
+                    },
+                    "reviews": {
+                        "label": "Number of reviews",
+                        "format": "text"
+                    },
+                    "url": {
+                        "label": "URL",
+                        "format": "link"
+                    }
+                }
+            }
+        }
+    }
+}
