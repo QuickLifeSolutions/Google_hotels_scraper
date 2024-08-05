@@ -16,7 +16,7 @@ export interface GoogleHotelItemData {
 }
 
 export const getHotelItemData = async (page: Page, log: Log): Promise<GoogleHotelItemData> => {
-    const title = await (await page.waitForSelector('h1[role="heading"]')).innerText();
+    const title = await page.locator('h1[role="heading"]').last().innerText();
 
     const pricesTab = await page.waitForSelector('div[id="prices"]');
     const reviewsTab = await page.waitForSelector('div[id="reviews"]');
