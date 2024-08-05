@@ -27,8 +27,13 @@ export const getDetailsUrls = async (page: Page, log: Log, options: GoogleHotels
             `https://www.google.com${await item.getAttribute('href')}`
         ))) as string[];
 
-        totalItems += items.length;
+        if (options.maxResults === undefined) {
+            await enqueueDetails(urls);
+        } else {
+            await enqueueDetails(urls.slice(0, options.maxResults - totalItems));
+        }
 
+        totalItems += items.length;
         const nextPageButton = page.getByRole('button').filter({ hasText: 'Next' }).first();
         // const nextPageButton = await page.$(nextPageButtonSelector);
         if (nextPageButton !== null && (options.maxResults === undefined || totalItems < options.maxResults!)) {
@@ -38,12 +43,6 @@ export const getDetailsUrls = async (page: Page, log: Log, options: GoogleHotels
             pageNumber++;
         } else {
             hasNextPage = false;
-        }
-
-        if (options.maxResults === undefined) {
-            await enqueueDetails(urls);
-        } else {
-            await enqueueDetails(urls.slice(0, options.maxResults - totalItems));
         }
     } while (hasNextPage);
 };
