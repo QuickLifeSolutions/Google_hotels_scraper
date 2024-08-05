@@ -5,5 +5,5 @@ export interface GoogleHotelsOptions {
     numberOfAdults: number;
     numberOfChildren: number;
     currencyCode: string;
-    maxResults: number;
+    maxResults?: number;
 }

@@ -2,7 +2,7 @@
 	"actorSpecification": 1,
 	"name": "google-hotels-scraper",
 	"title": "Google Hotels Scraper",
-	"description": "Google Hotels Scraper is an actor for extracting data about hotels from Google search results.",
+	"description": "Google Hotels Scraper is an actor for extracting prices from Google search results.",
 	"version": "0.1",
 	"meta": {
 		"templateId": "ts-crawlee-playwright-chrome"

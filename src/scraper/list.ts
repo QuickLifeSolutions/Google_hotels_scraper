@@ -31,7 +31,7 @@ export const getDetailsUrls = async (page: Page, log: Log, options: GoogleHotels
 
         const nextPageButton = page.getByRole('button').filter({ hasText: 'Next' }).first();
         // const nextPageButton = await page.$(nextPageButtonSelector);
-        if (nextPageButton !== null && totalItems < options.maxResults) {
+        if (nextPageButton !== null && (options.maxResults === undefined || totalItems < options.maxResults!)) {
             await nextPageButton.click();
             await waitWhileGoogleLoading(page);
             await page.waitForTimeout(1000);
@@ -40,7 +40,11 @@ export const getDetailsUrls = async (page: Page, log: Log, options: GoogleHotels
             hasNextPage = false;
         }
 
-        await enqueueDetails(urls.slice(0, options.maxResults - totalItems));
+        if (options.maxResults === undefined) {
+            await enqueueDetails(urls);
+        } else {
+            await enqueueDetails(urls.slice(0, options.maxResults - totalItems));
+        }
     } while (hasNextPage);
 };
 
