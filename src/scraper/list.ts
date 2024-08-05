@@ -40,7 +40,7 @@ export const getDetailsUrls = async (page: Page, log: Log, options: GoogleHotels
             hasNextPage = false;
         }
 
-        await enqueueDetails(urls);
+        await enqueueDetails(urls.slice(0, options.maxResults - totalItems));
     } while (hasNextPage);
 };
 

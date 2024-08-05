@@ -4,11 +4,13 @@ import { Page } from 'playwright';
 export interface GoogleHotelItemData {
     url: string;
     title: string;
-    website: string;
+    website?: string;
     address: string;
-    phone: string;
+    phone?: string;
     photos: string[];
+    thumbnail?: string;
     rating: number;
+    priceRange?: string;
     reviews: number;
     prices: {provider: string, price: number, link: string}[];
 }
@@ -29,12 +31,18 @@ export const getHotelItemData = async (page: Page, log: Log): Promise<GoogleHote
         const link = await row.locator('..').getAttribute('href');
 
         if (link != null) {
-            const provider = await row.locator('div:nth-of-type(1) > div > span > span').first().innerText();
+            try {
+                const provider = await row.locator('div:nth-of-type(1) > div > span > span').first().innerText();
 
-            const textPrice = await row.locator('div:nth-of-type(2) > span > span > span > span').first().innerText();
-            const price = parseFloat(textPrice.replace(/[^0-9.]/g, ''));
+                const textPrice = await row.locator('div:nth-of-type(2) > span > span > span > span').first().innerText();
+                const price = parseFloat(textPrice.replace(/[^0-9.]/g, ''));
 
-            return { provider, price, link: `https://www.google.com/travel${link}` };
+                return { provider, price, link: `https://www.google.com/travel${link}` };
+            } catch (e) {
+                // some providers has multiple prices and structure is different of the others is different,
+                // so we need to skip them and use the first (cheapest) price
+                return null;
+            }
         }
 
         return null;
@@ -54,9 +62,16 @@ export const getHotelItemData = async (page: Page, log: Log): Promise<GoogleHote
     }
 
     await aboutTab.click();
-    const website = (await page.locator('a[aria-label="Website"]').getAttribute('href')) || '';
+
     const address = (await page.locator('span[aria-label*="hotel address is"]').innerText()) || '';
-    const phone = (await page.locator('span[aria-label*="call this hotel"]').innerText()) || '';
+    let website: string | undefined;
+    if (await page.locator('a[aria-label="Website"]').count()) {
+        website = await page.locator('a[aria-label="Website"]').getAttribute('href') || undefined;
+    }
+    let phone: string | undefined;
+    if (await page.locator('span[aria-label*="call this hotel"]').count()) {
+        phone = await page.locator('span[aria-label*="call this hotel"]').innerText() || undefined;
+    }
 
     await photosTab.click();
     await page.waitForTimeout(2000);
@@ -74,7 +89,18 @@ export const getHotelItemData = async (page: Page, log: Log): Promise<GoogleHote
 
     log.info(`Parsed detail (${title})`, { url: page.url() });
 
+    const thumbnail = photos.length ? photos[0] : undefined;
+    let priceRange: string | undefined;
+    if (prices.length === 1) {
+        priceRange = `${prices[0].price}`;
+    } else if (prices.length > 1) {
+        const minPrice = prices.reduce((min, p) => (p.price < min ? p.price : min), prices[0].price);
+        const maxPrice = prices.reduce((max, p) => (p.price > max ? p.price : max), prices[0].price);
+        priceRange = `${minPrice} - ${maxPrice}`;
+    }
+
     return {
+        thumbnail,
         url: page.url(),
         title,
         website,
@@ -84,5 +110,6 @@ export const getHotelItemData = async (page: Page, log: Log): Promise<GoogleHote
         rating,
         reviews,
         prices,
+        priceRange,
     };
 };

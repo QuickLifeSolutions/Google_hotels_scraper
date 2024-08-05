@@ -1,5 +1,5 @@
 {
-    "actorSpecification": 2,
+    "actorSpecification": 1,
     "fields": {},
     "views": {
         "hotels": {
@@ -7,16 +7,22 @@
             "description": "Overview of all scraped hotels",
             "transformation": {
                 "fields": [
+                    "thumbnail",
                     "title",
                     "address",
                     "rating",
                     "reviews",
+                    "priceRange",
                     "url"
                 ]
             },
             "display": {
                 "component": "table",
                 "properties": {
+                    "thumbnail": {
+                        "label": "Thumbnail",
+                        "format": "image"
+                    },
                     "title": {
                         "label": "Hotel name",
                         "format": "text"
@@ -31,6 +37,10 @@
                     },
                     "reviews": {
                         "label": "Number of reviews",
+                        "format": "text"
+                    },
+                    "priceRange": {
+                        "label": "Price range",
                         "format": "text"
                     },
                     "url": {
