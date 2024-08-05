@@ -1,27 +1,27 @@
 {
     "title": "PlaywrightCrawler Template",
     "type": "object",
-    "schemaVersion": 1,
+    "schemaVersion": 2,
     "properties": {
         "searchQuery": {
             "title": "Search query",
             "type": "string",
             "description": "Query to search on google travel hotels.",
-            "prefill": "Prague",
+            "example": "Prague",
             "editor": "textfield"
         },
         "checkInDate": {
             "title": "Check-in date",
             "type": "string",
             "description": "Check-in date for hotels search. Format: YYYY-MM-DD.",
-            "prefill": "2024-09-01",
+            "example": "2024-09-01",
             "editor": "textfield"
         },
         "checkOutDate": {
             "title": "Check-out date",
             "type": "string",
             "description": "Check-out date for hotels search. Format: YYYY-MM-DD.",
-            "prefill": "2024-09-02",
+            "example": "2024-09-02",
             "editor": "textfield"
         },
         "numberOfAdults": {
