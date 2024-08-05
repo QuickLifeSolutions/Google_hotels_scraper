@@ -1,11 +1,11 @@
-import { Actor, ProxyConfiguration } from 'apify';
+import { Actor, ProxyConfigurationOptions } from 'apify';
 import { PlaywrightCrawler } from 'crawlee';
 import { createGoogleHotelsRouter } from './routes.js';
 import { GoogleHotelsOptions } from './scraper/options.js';
 import { CONTENT_LANGUAGE_CODE, DEFAULT_MAX_REQUESTS_PER_CRAWL } from './constants.js';
 
 interface Input extends GoogleHotelsOptions {
-    proxyConfiguration: ProxyConfiguration;
+    proxyConfig: ProxyConfigurationOptions;
     maxRequestsPerCrawl: number;
 }
 
@@ -22,9 +22,9 @@ if (input.checkOutDate.match(/^\d{4}-\d{2}-\d{2}$/) === null) {
     throw new Error('Invalid check-out date format. Use YYYY-MM-DD.');
 }
 
+const proxyConfiguration = await Actor.createProxyConfiguration(input.proxyConfig);
 const {
     searchQuery,
-    proxyConfiguration = await Actor.createProxyConfiguration(),
     maxRequestsPerCrawl = DEFAULT_MAX_REQUESTS_PER_CRAWL,
 } = input;
 

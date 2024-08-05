@@ -4,7 +4,7 @@ Actor for scraping [Google Hotels](https://google.com/travel/hotels) search resu
 
 ## Input
 
-The input of this actor is **searchQuery**, **checkInDate**, **checkOutDate**, **numberOfAdults**, **numberOfChildren** and **maxResults**.
+The input of this actor is **searchQuery**, **checkInDate**, **checkOutDate**, **numberOfAdults**, **numberOfChildren**, **currencyCode** and **maxResults**.
 Example of looking for prices in Prague for 2 adults from 2024-12-24 to 2024-12-26.
 
 ```json
@@ -14,6 +14,7 @@ Example of looking for prices in Prague for 2 adults from 2024-12-24 to 2024-12-
     "checkOutDate": "2022-12-26",
     "numberOfAdults": 2,
     "numberOfChildren": 0,
+    "currencyCode": "EUR",
     "maxResults": 100
 }
 ```
