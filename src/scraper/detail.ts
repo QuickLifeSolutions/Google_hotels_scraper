@@ -1,21 +1,23 @@
-import { Log } from 'crawlee';
-import { Page } from 'playwright';
+import { LoadedRequest, PlaywrightCrawlingContext, Request } from 'crawlee';
 
 export interface GoogleHotelItemData {
     url: string;
     title: string;
     website?: string;
-    address: string;
+    address?: string;
     phone?: string;
     photos: string[];
     thumbnail?: string;
     rating: number;
     priceRange?: string;
     reviews: number;
-    prices: {provider: string, price: number, link: string}[];
+    prices: { provider: string, price: number, link: string }[];
 }
 
-export const getHotelItemData = async (page: Page, log: Log): Promise<GoogleHotelItemData> => {
+export const getHotelItemData = async <Context extends PlaywrightCrawlingContext>(ctx: Omit<Context, 'request'> & {
+    request: LoadedRequest<Request>;
+}): Promise<GoogleHotelItemData> => {
+    const { page, log } = ctx;
     const title = await page.locator('h1[role="heading"]').last().innerText();
 
     const url = page.url();
@@ -51,10 +53,13 @@ export const getHotelItemData = async (page: Page, log: Log): Promise<GoogleHote
     }))).filter((price, i, arr) => price !== null && arr.findIndex((o) => o?.provider === price.provider) === i) as GoogleHotelItemData['prices'];
 
     await reviewsTab.click();
-    const reviewText = await page.locator('div[aria-label*="out of"][role="text"]').first().getAttribute('aria-label');
+    let reviewText: string | undefined;
+    if (await page.locator('div[aria-label*="out of"][role="text"]').count()) {
+        reviewText = await page.locator('div[aria-label*="out of"][role="text"]').first().getAttribute('aria-label') || undefined;
+    }
     let rating = 0;
     let reviews = 0;
-    if (reviewText !== null) {
+    if (reviewText) {
         rating = parseFloat(reviewText.substring(0, reviewText.indexOf('out')).trim());
         reviews = parseInt(reviewText.substring(reviewText.indexOf('from'))
             .replace('from', '')
@@ -65,7 +70,10 @@ export const getHotelItemData = async (page: Page, log: Log): Promise<GoogleHote
 
     await aboutTab.click();
 
-    const address = (await page.locator('span[aria-label*="hotel address is"]').innerText()) || '';
+    let address: string | undefined;
+    if (await page.locator('span[aria-label*="hotel address is"]').count()) {
+        address = await page.locator('span[aria-label*="hotel address is"]').getAttribute('href') || undefined;
+    }
     let website: string | undefined;
     if (await page.locator('a[aria-label="Website"]').count()) {
         website = await page.locator('a[aria-label="Website"]').getAttribute('href') || undefined;

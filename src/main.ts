@@ -34,7 +34,7 @@ const crawler = new PlaywrightCrawler({
     requestHandler: createGoogleHotelsRouter(input),
 });
 
-await crawler.run([`https://www.google.com/travel/search?q=${searchQuery}&hl=${CONTENT_LANGUAGE_CODE}`]);
+await crawler.run([`https://www.google.com/travel/search?q=${encodeURIComponent(searchQuery)}&hl=${CONTENT_LANGUAGE_CODE}`]);
 
 // Exit successfully
 await Actor.exit();

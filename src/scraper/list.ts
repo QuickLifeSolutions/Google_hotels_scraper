@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { Log } from 'crawlee';
+import { LoadedRequest, PlaywrightCrawlingContext, Request } from 'crawlee';
 import { waitWhileGoogleLoading } from './utils.js';
 import { GoogleHotelsOptions } from './options.js';
 import { DEFAULT_NUM_OF_ADULTS, DEFAULT_NUM_OF_CHILDREN, MAX_NUM_OF_PEOPLE } from '../constants.js';
@@ -7,7 +7,10 @@ import { DEFAULT_NUM_OF_ADULTS, DEFAULT_NUM_OF_CHILDREN, MAX_NUM_OF_PEOPLE } fro
 // define type for callback function
 type EnqueueDetails = (urls: string[]) => Promise<void>;
 
-export const getDetailsUrls = async (page: Page, log: Log, options: GoogleHotelsOptions, enqueueDetails: EnqueueDetails) => {
+export const getDetailsUrls = async <Context extends PlaywrightCrawlingContext>(ctx: Omit<Context, 'request'> & {
+    request: LoadedRequest<Request>;
+}, options: GoogleHotelsOptions, enqueueDetails: EnqueueDetails) => {
+    const { page, log } = ctx;
     // Wait for the input element to be present and the page to be loaded
     const element = await page.waitForSelector('input[aria-label="Search for places, hotels and more"]');
     log.info(await element.inputValue());

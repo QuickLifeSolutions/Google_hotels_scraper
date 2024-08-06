@@ -19,7 +19,7 @@ export const skipGoogleConsent = async (request: LoadedRequest<Request>, page: P
  */
 export const waitWhileGoogleLoading = async (page: Page) => {
     await page.waitForFunction(async () => {
-        const loader = await page.$('div[aria-label="Loading results"]');
-        return !((await loader?.isVisible()) ?? false);
+        const loader = document.querySelector('div[aria-label="Loading results"]');
+        return !(loader?.checkVisibility() ?? false);
     });
 };
