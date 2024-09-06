@@ -8,6 +8,7 @@
             "type": "string",
             "description": "Query to search on google travel hotels.",
             "example": "Prague",
+            "prefill": "Prague",
             "editor": "textfield"
         },
         "checkInDate": {
@@ -15,6 +16,7 @@
             "type": "string",
             "description": "Check-in date for hotels search. Format: YYYY-MM-DD.",
             "example": "2024-09-01",
+            "prefill": "2024-12-01",
             "editor": "textfield"
         },
         "checkOutDate": {
@@ -22,6 +24,7 @@
             "type": "string",
             "description": "Check-out date for hotels search. Format: YYYY-MM-DD.",
             "example": "2024-09-02",
+            "prefill": "2024-12-05",
             "editor": "textfield"
         },
         "numberOfAdults": {
@@ -47,7 +50,10 @@
             "title": "Max crawled hotels",
             "type": "integer",
             "description": "Use to limit number of hotels you want to get from crawler. If you fill nothing all hotels will be scrape",
-            "minimum": 0
+            "minimum": 0,
+            "default": 5,
+            "prefill": 5,
+            "example": 5
         },
         "proxyConfig": {
             "title": "Proxy configuration",
@@ -62,8 +68,7 @@
         "maxRequestsPerCrawl": {
             "title": "Max Requests per Crawl",
             "type": "integer",
-            "description": "Maximum number of requests that can be made by this crawler.",
-            "default": 100
+            "description": "Maximum number of requests that can be made by this crawler."
         }
     },
     "required": [
