@@ -1,72 +1,148 @@
-## Google Hotels Scraper
 
-Actor for scraping [Google Hotels](https://google.com/travel/hotels) search results. It searches for hotels in a given location and checks the prices from different providers for a given date range.
+# Google Hotels Scraper – Precision Hotel Data Extraction
 
-## Input
+The **Google Hotels Scraper** is your ultimate solution for gathering real-time hotel data from Google Travel. Whether you're looking for pricing, hotel reviews, ratings, or availability, this tool scrapes detailed information that empowers travel planning, business analytics, and market research. Engineered with a clean and intuitive interface, the scraper allows you to effortlessly gather hotel data for any city or location, tailored to your needs.
 
-The input of this actor is **searchQuery**, **checkInDate**, **checkOutDate**, **numberOfAdults**, **numberOfChildren**, **currencyCode** and **maxResults**.
-Example of looking for prices in Prague for 2 adults from 2024-12-24 to 2024-12-26.
+With enhanced SEO-friendly descriptions, a modernized input-output format, and adaptive features, this scraper is designed to be highly functional, reliable, and optimized for today’s data-driven world.
 
-```json
-{
-    "searchQuery": "Prague",
-    "checkInDate": "2022-12-24",
-    "checkOutDate": "2022-12-26",
-    "numberOfAdults": 2,
-    "numberOfChildren": 0,
-    "currencyCode": "EUR",
-    "maxResults": 100
-}
-```
+---
 
-Click on the input tab for a full explanation of input in JSON.
+## 🚀 Why Use This Hotel Scraper?
 
-## Output
+- **Real-Time Insights**: Get live hotel data, including the latest prices, availability, and ratings, straight from Google Hotels.
+- **Customizable**: Choose specific locations, date ranges, guest counts, and currency preferences, allowing for full customization of your searches.
+- **Tailored for Performance**: With flexible options for the number of results and providers, you have full control over the data output.
+- **Efficient Market Research**: Analyze trends, compare hotel prices across providers, or integrate the data into your own travel-related website or application.
 
-The output contains:
-- url - URL of the search results
-- name of the hotel
-- website of the hotel
-- address of the hotel
-- phone number of the hotel
-- photos of the hotel (urls)
-- rating of the hotel
-- number of reviews
-- prices from different providers (provider, price, link to the offer)
+---
 
-Example of the output is shown below:
+## 🏨 How It Works
+
+### Input Configuration
+
+The input fields of this scraper are designed to be user-friendly, yet highly customizable. You can easily modify the search parameters to get results tailored to your specific needs.
+
+| **Parameter**     | **Type**    | **Description**                                                |
+|-------------------|-------------|----------------------------------------------------------------|
+| `location`        | `string`    | Name of the city or region (e.g., "Tokyo", "Paris").           |
+| `checkInDate`     | `date`      | Check-in date in the format `YYYY-MM-DD`.                      |
+| `checkOutDate`    | `date`      | Check-out date in the format `YYYY-MM-DD`.                     |
+| `adults`          | `integer`   | Number of adult guests.                                        |
+| `children`        | `integer`   | Number of child guests (0 if none).                            |
+| `currency`        | `string`    | Currency for price display (e.g., "USD", "EUR", "GBP").        |
+| `maxResults`      | `integer`   | Maximum number of hotel results to return (e.g., 100).         |
+
+#### Example Input:
 
 ```json
 {
-    "url": "https://www.google.com/travel/search?q=Prague&hl=en&ts=CAESCgoCCAMKAggDEAEaWgo8EjgKCC9tLzA1eXdnMiQweDQ3MGI5MzljMDk3MDc5OGI6MHg0MDBhZjBmNjYxNjQwOTA6BlByYWd1ZRoAEhoSFAoHCOgPEAkYBRIHCOgPEAkYCBgDMgIIASoNCgk6A0VVUmICCAEaAA&qs=CAEyI0NoWUlsX2ZFMDU2UTBvRThHZ292YlM4d05qUXhhM2N6RUFFOA1IAA&ap=MAG6AQZwaG90b3M",
-    "title": "Hilton Prague",
-    "website": "https://www.hilton.com/en/hotels/prghitw-hilton-prague/?SEO_id=GMB-EMEA-TW-PRGHITW&sa=X&ved=2ahUKEwil0LzxqdmHAxXBxxEIHZ7uBhsQyK4DegUIAxDpCg",
-    "address": "Pobřežní 311/1, 186 00 Praha 8-Rohanský ostrov",
-    "phone": "224 841 111",
-    "photos": [
-        "https://lh5.googleusercontent.com/p/AF1QipPcz2Xfi5AxX2VVZTsoQxW6EeSC0J810wUW_N2o=w253-h201-k-no",
-        "https://lh5.googleusercontent.com/p/AF1QipM3W02WBDGrgUySsTH2WKJ-9-x_OjFyzF6BuRdC=k-no"
-    ],
-    "thumbnail": "https://lh5.googleusercontent.com/p/AF1QipPcz2Xfi5AxX2VVZTsoQxW6EeSC0J810wUW_N2o=w253-h201-k-no",
-    "rating": 4.4,
-    "reviews": 8723,
-    "prices": [
-        {
-            "provider": "Hilton Prague",
-            "price": 173,
-            "link": "https://www.google.com/travel/aclk?sa=l&ai=CATSdJmauZsmkHp-hjuwPjsvXgQP2-I3RV7DFsJmVCsu3lMyDFwgKEAEg6ZDtigEoBGDM4e2B_C6gAerR8OACyAEIqgRVT9BSvILN94aNCRUi-XUK2d77w7xbR7C6UQWEH5dUGKt9LtscOW_9m5_b4WgDcNinzJqbmk8VCCRJV3Ho8JadMDOqSTL4-iT0UrchRjE-vnUAWIj4fMAE962Z8JkCiAWByPrdB8AFkgGgBmWQBwGoB-u4sQKoB6a-G6gHuZqxAqgH89EbqAfu0huoB_-csQKoB8rcG6gHkq-xAqgHu6SxAqgH2KaxAqgHyqmxAqgHorqxAqgH6rqxAqgHmbWxAqgH3rWxAqgH26qxAqgH0KqxAqgH3LCxAqgH6rGxAqgHlLixAqgH7LixAqgHvrexAqgH28WxAqgHg8OxAqgHvK2xAqgHuauxAqgH6LWxAqAIvaE9sAgBwAgB0ggxEAEyB4HgwuCfgAE6EeDAgICAkIACgoCAgICAhuABQgEQSN641jJQCVjJz8PxqdmHA8gJrAH4CQGiCuwFCgoyMDI0LTA5LTA1EAMaAkNaIgJlbilj90idlVQSMTIGaGlsdG9uOAJIAVINVDJfX1JQTE9DUl9fMl2aTzNGZYWj0URoAHIDQ1pLggFZCgJUMhoSCgJDMRIMSElMVE9OLVBSR0hJGg4KAkMyEggxMzE1My4wMRoICgJDMxICVDIaDAoCQzQSBlJQTE9DUhoHCgJDNRIBMjICCAJCClQyX19SUExPQ1KgAQGwAQG4AQHIAbGC2i_gAQHoAQHwAQH4AQCoAswBqALlA7AC6tHw4AK4AoHI-t0H4AIA6gIDRVVS-gKEBGh0dHBzOi8vbGlua2NlbnRlcnVzLmRlcmJ5c29mdGNhLmNvbS9kcGxhdGZvcm0tbGlua2NlbnRlci9ib29raW5nLmh0bT9ob3RlbENvZGU9SElMVE9OLVBSR0hJJnByb3ZpZGVySG90ZWxDb2RlPVBSR0hJJmNoZWNrSW5EYXRlPTIwMjQtMDktMDUmY2hlY2tPdXREYXRlPTIwMjQtMDktMDgmaWRlbnRpZmllcj1nb29nbGUtaGlsdG9uJnByaWNlPTEzMTUzLjAxJnJvb21UeXBlQ29kZT1UMiZyYXRlUGxhbkNvZGU9UlBMT0NSJmN1cnJlbmN5PUNaSyZsYW5ndWFnZT1lbiZ1c2VyQ291bnRyeT1DWiZkYXRlVHlwZT1zZWxlY3RlZCZ0ZXN0Q2xpY2s9ZmFsc2Umc2l0ZXR5cGU9bG9jYWx1bml2ZXJzYWwmb2NjdXBhbmN5PTImcGFydG5lcklkPWhpbHRvbiZjYW1wYWlnbmlkPTIwNzYwOTEzOTMmcmF0ZVJ1bGVJZD0mdXNlcmxpc3RpZD0maWZEZWZhdWx0RGF0ZT1zZWxlY3RlZCZpc1Byb21vdGVkPWZhbHNlJmlzUnVsZUlkc0Nsb3NlZD1mYWxzZSZzX2lzX2FkPXRydWUmYWRUeXBlPTEmYWR1bHRzPTImY2hpbGRyZW49MIoDAOgKAZALA5gLAdALGtoMHAoKEMCnyaGK-aDPNRICAQNAAUoCAhlSBAMHCAnoDBOaDQEaqg0CQ1rIDQGCFAQIehIA0BUBmBYB-BYBgBcBkhcJEgcIARADGKoCuhcEOAFIAdAYAYgZAQ&co=1&ase=2&gclid=EAIaIQobChMIyc_D8anZhwMVn5CDBx2O5TUwEAoYASABEgKSPPD_BwE&sig=AOD64_0VJtJKhDzI_hWt5qFGOpgk0HsJmQ&adurl=https://linkcenterus.derbysoftca.com/dplatform-linkcenter/booking.htm?hotelCode%3DHILTON-PRGHI%26providerHotelCode%3DPRGHI%26checkInDate%3D2024-09-05%26checkOutDate%3D2024-09-08%26identifier%3Dgoogle-hilton%26price%3D13153.01%26roomTypeCode%3DT2%26ratePlanCode%3DRPLOCR%26currency%3DCZK%26language%3Den%26userCountry%3DCZ%26dateType%3Dselected%26testClick%3Dfalse%26sitetype%3Dlocaluniversal%26occupancy%3D2%26partnerId%3Dhilton%26campaignid%3D2076091393%26rateRuleId%3D%26userlistid%3D%26ifDefaultDate%3Dselected%26isPromoted%3Dfalse%26isRuleIdsClosed%3Dfalse%26s_is_ad%3Dtrue%26adType%3D1%26adults%3D2%26children%3D0"
-        },
-        {
-            "provider": "Booking.com",
-            "price": 173,
-            "link": "https://www.google.com/travel/aclk?sa=l&ai=C6umHJmauZsmkHp-hjuwPjsvXgQOEzbHQeLWlsKTWEpmK-fizQwgKEAIg6ZDtigEoBGDM4e2B_C6gAbmgwNUqyAEIqQIENufgmVCyPqoEVU_QP7jEzfSGjQkVIvl1Ctme7d2vQkewulEFhB-XVBirfU26Ykxr_Zuf2-FoA3DYp8yam7opJmgdSTMcmp2vnQYyqkky-PoEkmHXGEYxPr51ZDX6lUXABP7V4afYBIgFt7DH3k_ABZIBoAZlkAcBqAfruLECqAemvhuoB7masQKoB_PRG6gH7tIbqAf_nLECqAfK3BuoB5KvsQKoB7uksQKoB9imsQKoB8qpsQKoB6K6sQKoB-q6sQKoB5m1sQKoB961sQKoB9uqsQKoB9CqsQKoB9ywsQKoB-qxsQKoB5S4sQKoB-y4sQKoB763sQKoB9vFsQKoB4PDsQKgCL2hPbAIAcAIAdIIMRABMgeB4MLgn4ABOhHgwICAgJCAAoKAgICAgIbgAUIBEEjeuNYyUAlYyc_D8anZhwPICawB-AkBogruCAoKMjAyNC0wOS0wNRADGgJDWiICZW4pY_dInZVUEjEyE2Jvb2tpbmcuY29tU3RhbmRhcmQ4AkgBUhc3NzU2MDEzXzk0MjkxNjA3XzJfMzRfMF2bTzNGZXaj0URoAHIDQ1pLggGIAQoHNzc1NjAxMxo3CgJDNRIxZWRndGlkPUdqNEdObnhrVFh5M3lIRU1JOUdrMFEmZWZwYz1FeFU3QWFFeFU3QWFWdxoWCgJDMRIQY3ovaGlsdG9uLXByYWd1ZRoICgJDMhICMTAaHgoCQzMSGG5vX3Jvb21zPTEmdHM9MTcyMjcwNDgyODICCAKKAQZwdWJsaWOgAQGwAQG4AQHIAf_N5C_gAQHoAQLwAQH4AQGoAswBqALlA7ACuaDA1Sq4Arewx95P4AIA6gIDRVVS-gK2Bmh0dHBzOi8vd3d3LmJvb2tpbmcuY29tL2hvdGVsL2N6L2hpbHRvbi1wcmFndWUuaHRtbD9jaGVja2luPTIwMjQtMDktMDUmY2hlY2tvdXQ9MjAyNC0wOS0wOCZncm91cF9hZHVsdHM9MiZyZXFfYWR1bHRzPTImc2hvd19yb29tPTc3NTYwMTNfOTQyOTE2MDdfMl8zNF8wJmxhbmc9ZW4mc2VsZWN0ZWRfY3VycmVuY3k9RVVSJmV4cnQ9MC4wMzk0MzAxMiZleHRfcHJpY2VfdG90YWw9NTE4LjYyJmV4dF9wcmljZV90YXg9NjYuMTMmeGZjPUNaSyZoY2E9bSZncm91cF9jaGlsZHJlbj0wJnJlcV9jaGlsZHJlbj0wJiZub19yb29tcz0xJnRzPTE3MjI3MDQ4MjgmZWRndGlkPUdqNEdObnhrVFh5M3lIRU1JOUdrMFEmZWZwYz1FeFU3QWFFeFU3QWFWdyZ1dG1fc291cmNlPW1ldGFnaGEmdXRtX21lZGl1bT1sb2NhbHVuaXZlcnNhbCZ1dG1fY2FtcGFpZ249Q1omdXRtX3Rlcm09aG90ZWwtNzc1NjAmdXRtX2NvbnRlbnQ9ZGV2LWRlc2t0b3BfbG9zLTNfYnctMzNfZG93LVRodXJzZGF5X2RlZmRhdGUtMF9yb29tLTBfZ3N0YWR0LTJfcmF0ZWlkLXB1YmxpY19hdWQtMF9nYWNpZC0yMTQwNDcwMjc3NV9tY2lkLTEwX3BwYS0wX2NscmlkLTBfYWQtMV9nc3RraWQtMF9jaGVja2luLTIwMjQwOTA1X3BwdC0mYWlkPTM1NjkzOCZsYWJlbD1tZXRhZ2hhLWxpbmstTFVDWi1ob3RlbC03NzU2MF9kZXYtZGVza3RvcF9sb3MtM19idy0zM19kb3ctVGh1cnNkYXlfZGVmZGF0ZS0wX3Jvb20tMF9nc3RhZHQtMl9yYXRlaWQtcHVibGljX2F1ZC0wX2dhY2lkLTIxNDA0NzAyNzc1X21jaWQtMTBfcHBhLTBfY2xyaWQtMF9hZC0xX2dzdGtpZC0wX2NoZWNraW4tMjAyNDA5MDVfcHB0LYoDAOgKAZALA5gLAdALGtoMHQoLEMDn4LKAlO6vjwESAgEDQAFKAgIZUgQDBwgJ6AwTmg0BGqoNAkNayA0BghQECHoSANAVAfgWAYAXAZIXCRIHCAEQAxiqAroXBDgBSAHQGAGIGQE&co=1&ase=2&gclid=EAIaIQobChMIyc_D8anZhwMVn5CDBx2O5TUwEAoYAiABEgLme_D_BwE&sig=AOD64_1a9VPx3FrS8QtDSqLesx9MQZZOKw&adurl=https://www.booking.com/hotel/cz/hilton-prague.html?checkin%3D2024-09-05%26checkout%3D2024-09-08%26group_adults%3D2%26req_adults%3D2%26show_room%3D7756013_94291607_2_34_0%26lang%3Den%26selected_currency%3DEUR%26exrt%3D0.03943012%26ext_price_total%3D518.62%26ext_price_tax%3D66.13%26xfc%3DCZK%26hca%3Dm%26group_children%3D0%26req_children%3D0%26%26no_rooms%3D1%26ts%3D1722704828%26edgtid%3DGj4GNnxkTXy3yHEMI9Gk0Q%26efpc%3DExU7AaExU7AaVw%26utm_source%3Dmetagha%26utm_medium%3Dlocaluniversal%26utm_campaign%3DCZ%26utm_term%3Dhotel-77560%26utm_content%3Ddev-desktop_los-3_bw-33_dow-Thursday_defdate-0_room-0_gstadt-2_rateid-public_aud-0_gacid-21404702775_mcid-10_ppa-0_clrid-0_ad-1_gstkid-0_checkin-20240905_ppt-%26aid%3D356938%26label%3Dmetagha-link-LUCZ-hotel-77560_dev-desktop_los-3_bw-33_dow-Thursday_defdate-0_room-0_gstadt-2_rateid-public_aud-0_gacid-21404702775_mcid-10_ppa-0_clrid-0_ad-1_gstkid-0_checkin-20240905_ppt-"
-        },
-        {
-            "provider": "Vio.com",
-            "price": 167,
-            "link": "https://www.google.com/travel/aclk?sa=l&ai=CdSSIJmauZsmkHp-hjuwPjsvXgQPN1oLha67_s42VCv-swL6oFggKEAQg6ZDtigEoBGDM4e2B_C6gAYrngt4DyAEIqQIENufgmVCyPqoEVU_QGY34zfKGjQkVIvl1CtnLicOzW0ewulEFhB-XVBirfVvoAg9v_Zuf2-FoA3DYp8yam91eURQkSV5u8uCanTAzqkky-Po66jGnLUYxPr51UEi15HzABLXFmu2SAogFi57XgBjABZIBoAZlkAcBqAfruLECqAemvhuoB7masQKoB_PRG6gH7tIbqAf_nLECqAfK3BuoB5KvsQKoB7uksQKoB9imsQKoB8qpsQKoB6K6sQKoB-q6sQKoB5m1sQKoB961sQKoB9uqsQKoB9CqsQKoB9ywsQKoB-qxsQKoB5S4sQKoB-y4sQKoB763sQKoB9vFsQKoB4PDsQKoB7ytsQKoB7mrsQKoB-i1sQKgCL2hPbAIAcAIAdIIMRABMgeB4MLgn4ABOhHgwICAgJCAAoKAgICAgIbgAUIBEEjeuNYyUAlYyc_D8anZhwPICawB-AkBogrtDAoKMjAyNC0wOS0wNRADGgJDWiICZW4pY_dInZVUEjEyCWZpbmRob3RlbDgCSAFSHjEyMDA2MzVfMjAyNC0wOS0wNV8zXzJfZmNmYmZpZl24qjBGZY8arERoAHIDQ1pLggG-AgoLTEtiZVR3WlZEdmsaZQoCQzESX190aCUyNTNEY2U3MzU1Mjg2NDM5Yzk3MDhmNzczZmM4ZDFlNDVlODAwMzU2N2IzOTAxODIwNWY2JTI1MjZkdHMlMjUzRDE3MjI3MDQ4MjklMjUyNnF1ZXJ5JTI1M0QxGsMBCgJDMxK8AWVwdiUzRE1TNHklMjZlc2QlM0RRN01sQ0Vhbjg2dTVINGszeDFvbS1FUlFlSjEydEZKMG51Sy1ETmw0RTZvOE45a0lycVFqZXNhbHc5NVA1c2lfNF9yUms4UXE2Ym02NmsyMVNsZVh2NHZRd0tqVmxxZkVRaHJTZ2NWc1YwaEJWUlFUZkJJXzFkUU0zUSUyNTNEJTI1M0QlMjZvdGklM0RtQVlMMGpjMG11SSUyNnRva2VuJTNEa2hzazIyMgIIAooBBk90aGVyc6ABAbABAbgBAcgB7d-S9QXgAQDoAQTwAQH4AQOoAswBqALlA7ACiueC3gO4Aoue14AY4AIA6gIDRVVS-gKBCWh0dHBzOi8vZGVhbHMudmlvLmNvbS8_c2lnPTczYWNhMTNjN2Y5NTJkMjY0MWMxNTZmM2U2OTEyNWUxZWI0OTdjMzI1ZjEyMjgyOGVlNWFhODc5NzE2OGI5YTEyZDMyMzAzMzMxMzMzNDM4MzYzMjMzJnR1cmw9aHR0cHMlM0ElMkYlMkZ3d3cudmlvLmNvbSUyRkhvdGVsJTJGU2VhcmNoJTNGY2hlY2tJbiUzRDIwMjQtMDktMDUlMjZjaGVja091dCUzRDIwMjQtMDktMDglMjZjdXJyJTNERVVSJTI2Zm9yY2VDdXJyZW5jeUNoYW5nZSUzRDElMjZsYW5nJTNEZW4lMjZmb3JjZUxhbmd1YWdlQ2hhbmdlJTNEMSUyNnJvb21zJTNEMiUzQSUyNnV0bV9zb3VyY2UlM0RnaGElMjZ1dG1fbWVkaXVtJTNEY3BjJTI2aG90ZWxJZCUzRDEyMDA2MzUlMjZ1c2VyQ291bnRyeSUzRENaJTI2cHJvZmlsZSUzRHIyZDJtNzNrbjglMjZwcmVmZXJyZWRSYXRlJTNENTAwLjExJTI2bGFiZWwlM0RzcmMlMjUzRGdoYSUyNTI2Y2x0eXBlJTI1M0Rob3RlbCUyNTI2ZGF0eXBlJTI1M0RzZWxlY3RlZCUyNTI2Z3NpdGUlMjUzRGxvY2FsdW5pdmVyc2FsJTI1MjZ1Y291bnRyeSUyNTNEQ1olMjUyNnVkZXZpY2UlMjUzRGRlc2t0b3AlMjUyNmhvdGVsJTI1M0QxMjAwNjM1JTI1MjZkYXklMjUzRDA1JTI1MjZtb250aCUyNTNEMDklMjUyNnllYXIlMjUzRDIwMjQlMjUyNmxvcyUyNTNEMyUyNTI2cHJpY2UlMjUzRDUwMC4xMSUyNTI2Y3VycmVuY3klMjUzREVVUiUyNTI2Y2lkJTI1M0Q2NDQzODgwMjAzJTI1MjZsaXN0aWQlMjUzRCUyNTI2cmF0ZWlkJTI1M0RPdGhlcnMlMjUyNmNsb3NlcmF0ZWlkJTI1M0QlMjUyNnByb21vJTI1M0QwJTI1MjZpc1ByaXZhdGVSYXRlJTI1M0QwJTI1MjZpc0F1ZGllbmNlVXNlciUyNTNEMCUyNTI2aXNQYWlkQ2xpY2slMjUzRDElMjUyNl90aCUyNTNEY2U3MzU1Mjg2NDM5Yzk3MDhmNzczZmM4ZDFlNDVlODAwMzU2N2IzOTAxODIwNWY2JTI1MjZkdHMlMjUzRDE3MjI3MDQ4MjklMjUyNnF1ZXJ5JTI1M0QxJTI2ZXB2JTNETVM0eSUyNmVzZCUzRFE3TWxDRWFuODZ1NUg0azN4MW9tLUVSUWVKMTJ0RkowbnVLLURObDRFNm84TjlrSXJxUWplc2Fsdzk1UDVzaV80X3JSazhRcTZibTY2azIxU2xlWHY0dlF3S2pWbHFmRVFoclNnY1ZzVjBoQlZSUVRmQklfMWRRTTNRJTI1M0QlMjUzRCUyNm90aSUzRG1BWUwwamMwbXVJJTI2dG9rZW4lM0RraHNrMjKKAwDoCgGQCwOYCwHQCxraDB0KCxCQiIyznY2i9_sBEgIBA0ABSgICGVIEAwcICegME5oNARqqDQJDWsgNAYIUBAh6EgDQFQGYFgH4FgGAFwGSFwkSBwgBEAMYqgK6FwQ4AUgB0BgBiBkB&co=1&ase=2&gclid=EAIaIQobChMIyc_D8anZhwMVn5CDBx2O5TUwEAoYBCABEgIaXfD_BwE&sig=AOD64_2kyeHPgDDQruQMF_zAHuUvWQSckw&adurl=https://deals.vio.com/?sig%3D73aca13c7f952d2641c156f3e69125e1eb497c325f122828ee5aa8797168b9a12d32303331333438363233%26turl%3Dhttps%253A%252F%252Fwww.vio.com%252FHotel%252FSearch%253FcheckIn%253D2024-09-05%2526checkOut%253D2024-09-08%2526curr%253DEUR%2526forceCurrencyChange%253D1%2526lang%253Den%2526forceLanguageChange%253D1%2526rooms%253D2%253A%2526utm_source%253Dgha%2526utm_medium%253Dcpc%2526hotelId%253D1200635%2526userCountry%253DCZ%2526profile%253Dr2d2m73kn8%2526preferredRate%253D500.11%2526label%253Dsrc%25253Dgha%252526cltype%25253Dhotel%252526datype%25253Dselected%252526gsite%25253Dlocaluniversal%252526ucountry%25253DCZ%252526udevice%25253Ddesktop%252526hotel%25253D1200635%252526day%25253D05%252526month%25253D09%252526year%25253D2024%252526los%25253D3%252526price%25253D500.11%252526currency%25253DEUR%252526cid%25253D6443880203%252526listid%25253D%252526rateid%25253DOthers%252526closerateid%25253D%252526promo%25253D0%252526isPrivateRate%25253D0%252526isAudienceUser%25253D0%252526isPaidClick%25253D1%252526_th%25253Dce7355286439c9708f773fc8d1e45e8003567b39018205f6%252526dts%25253D1722704829%252526query%25253D1%2526epv%253DMS4y%2526esd%253DQ7MlCEan86u5H4k3x1om-ERQeJ12tFJ0nuK-DNl4E6o8N9kIrqQjesalw95P5si_4_rRk8Qq6bm66k21SleXv4vQwKjVlqfEQhrSgcVsV0hBVRQTfBI_1dQM3Q%25253D%25253D%2526oti%253DmAYL0jc0muI%2526token%253Dkhsk22"
-        }
-    ],
-    "priceRange": "167 - 173"
+  "location": "London",
+  "checkInDate": "2024-11-10",
+  "checkOutDate": "2024-11-15",
+  "adults": 2,
+  "children": 1,
+  "currency": "GBP",
+  "maxResults": 20
 }
 ```
+
+This example configures the scraper to return up to 20 hotel results in London, displaying prices in British pounds for a stay from November 10th to November 15th, 2024, for two adults and one child.
+
+---
+
+## 📊 Detailed Output
+
+The output is structured for simplicity and completeness, allowing you to easily extract and use the data in your application, research, or report.
+
+| **Field**          | **Type**   | **Description**                                                 |
+|--------------------|------------|-----------------------------------------------------------------|
+| `hotelName`        | `string`   | Full name of the hotel.                                         |
+| `hotelUrl`         | `string`   | Direct link to the hotel booking page.                          |
+| `address`          | `string`   | The complete postal address of the hotel.                       |
+| `phoneNumber`      | `string`   | Contact phone number of the hotel.                              |
+| `photos`           | `array`    | URLs of hotel images and photos.                                |
+| `rating`           | `float`    | Customer rating (e.g., 4.5 out of 5).                           |
+| `reviewsCount`     | `integer`  | Total number of reviews available for the hotel.                |
+| `priceRange`       | `string`   | Price range from various providers (e.g., "£150 - £200").       |
+| `providerPrices`   | `array`    | List of providers with their respective prices and booking URLs.|
+
+### Example Output:
+
+```json
+{
+  "hotelName": "The Ritz London",
+  "hotelUrl": "https://www.ritzlondon.com/",
+  "address": "150 Piccadilly, St. James's, London W1J 9BR, United Kingdom",
+  "phoneNumber": "+44 20 7493 8181",
+  "photos": [
+    "https://example.com/ritz-photo1.jpg",
+    "https://example.com/ritz-photo2.jpg"
+  ],
+  "rating": 4.8,
+  "reviewsCount": 8754,
+  "priceRange": "£150 - £200",
+  "providerPrices": [
+    {
+      "provider": "Booking.com",
+      "price": 175,
+      "bookingUrl": "https://www.booking.com/hotel/ritz-london"
+    },
+    {
+      "provider": "Expedia",
+      "price": 180,
+      "bookingUrl": "https://www.expedia.com/hotel/ritz-london"
+    }
+  ]
+}
+```
+
+### How This Output Can Be Used:
+- **Travel Agencies**: Integrate the data into your platform for real-time hotel comparisons.
+- **Market Researchers**: Analyze hotel pricing trends across various regions and timeframes.
+- **Developers**: Easily export the output to databases, Excel, or custom-built apps for further processing.
+
+---
+
+## 🔧 Advanced Features
+
+### 1. **Multi-Currency Support**
+You can specify any global currency, ensuring price comparisons are accurate for international travelers or businesses.
+
+### 2. **Provider-Specific Data**
+Scrape prices from multiple providers, such as Booking.com, Expedia, and other popular booking platforms, allowing for easy comparison of deals.
+
+### 3. **High Customizability**
+Set parameters for specific date ranges, number of guests, and maximum results, giving you full control over the data you collect.
+
+### 4. **Optimized for High Volumes**
+Efficiently handles requests for high volumes of data without sacrificing performance. Perfect for businesses needing bulk hotel data or competitive pricing insights.
+
+---
+
+## 📈 Ideal Use Cases
+
+- **Travel Blogs**: Populate your content with live hotel data for price comparisons and travel planning tips.
+- **Business Analysts**: Use real-time data to study trends in hotel pricing and availability.
+- **Travel Agencies**: Build dynamic pricing comparison tools for your customers.
+
+---
+
+## 🌐 Connect With Us
+
+At **QuickLife Solutions**, we specialize in providing advanced data scraping solutions tailored to your needs. Check out our YouTube channel for tutorials, follow us on Instagram for updates, and subscribe to our AI newsletter for cutting-edge automation insights. Need help or want to explore more tools? Connect with us below:
+
+- **YouTube**: [Visit our channel](https://www.youtube.com/@CodeMaster-421)
+- **Instagram**: [Follow us on Instagram](https://www.instagram.com/quicklifesolutionsofficial/)
+- **AI Newsletter**: [Subscribe to our newsletter](https://sendfox.com/quicklifesolutions)
+- **Free Consultation**: [Book a free consultation call](https://tidycal.com/quicklifesolutions/free-consultation)
+- **More Tools**: [Explore our Apify actors](https://apify.com/dainty_screw)
+- **Discord**: [Raise a Support ticket here](https://discord.gg/2WGj2PDmHb)
+- **Contact Email**: [codemasterdevops@gmail.com](mailto:codemasterdevops@gmail.com)
+- **Website**: [Visit Out Website](https://quicklifesolutions.com/)
+
+---
+
+### Why QuickLife Solutions?
+
+Our tools are built for professionals who demand both performance and reliability. Whether you’re a developer, marketer, or analyst, we provide high-quality automation solutions that integrate seamlessly into your workflow. Let’s automate your success!
+
