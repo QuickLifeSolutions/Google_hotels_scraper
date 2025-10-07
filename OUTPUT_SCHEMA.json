@@ -1,0 +1,92 @@
+{
+  "title": "GoogleHotelsItem",
+  "description": "Structured hotel record returned by the Google Hotels Scraper.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Hotel name as displayed on Google Travel."
+    },
+    "url": {
+      "type": "string",
+      "description": "Canonical Google Hotels detail URL.",
+      "format": "uri"
+    },
+    "thumbnail": {
+      "type": "string",
+      "description": "Hero photo URL for the hotel.",
+      "format": "uri"
+    },
+    "website": {
+      "type": "string",
+      "description": "Official hotel website when available.",
+      "format": "uri"
+    },
+    "address": {
+      "type": "string",
+      "description": "Street address returned by Google Hotels."
+    },
+    "phone": {
+      "type": "string",
+      "description": "Hotel phone number if published on Google Hotels."
+    },
+    "photos": {
+      "type": "array",
+      "description": "Gallery of photo URLs surfaced on the Photos tab.",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "rating": {
+      "type": "number",
+      "description": "Average guest rating (0-5 scale)."
+    },
+    "reviews": {
+      "type": "integer",
+      "description": "Total review count parsed from Google Hotels.",
+      "minimum": 0
+    },
+    "priceRange": {
+      "type": "string",
+      "description": "Lowest to highest nightly price detected across providers."
+    },
+    "prices": {
+      "type": "array",
+      "description": "Per-provider price breakdown with outbound booking links.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "description": "Booking partner label (e.g., Booking.com, Expedia)."
+          },
+          "price": {
+            "type": "number",
+            "description": "Nightly price value extracted from the provider row."
+          },
+          "link": {
+            "type": "string",
+            "description": "Google Travel redirect URL for the provider offer.",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "provider",
+          "price",
+          "link"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "title",
+    "url",
+    "rating",
+    "reviews",
+    "prices",
+    "photos"
+  ],
+  "additionalProperties": false
+}
