@@ -17,32 +17,42 @@ export const getDetailsUrls = async <Context extends PlaywrightCrawlingContext>(
 
     await fillInputForm(page, options);
     await waitWhileGoogleLoading(page);
-    await page.waitForTimeout(1000);
+    const detailLinkSelector = 'main > c-wiz > span > c-wiz > c-wiz > div > a';
 
-    // const nextPageButtonSelector = 'main > c-wiz > span > c-wiz > c-wiz:last-of-type > div > button:nth-of-type(2)';
     let hasNextPage = true;
     let pageNumber = 1;
     let totalItems = 0;
     do {
-        const items = await page.$$('main > c-wiz > span > c-wiz > c-wiz > div > a');
-        log.info(`Found ${items.length} items on the page ${pageNumber}`);
-        const urls = await Promise.all(items.map(async (item) => (
-            `https://www.google.com${await item.getAttribute('href')}`
-        ))) as string[];
-
-        if (options.maxResults === undefined) {
-            await enqueueDetails(urls);
-        } else {
-            await enqueueDetails(urls.slice(0, options.maxResults - totalItems));
+        if (options.maxResults !== undefined && totalItems >= options.maxResults) {
+            break;
         }
 
-        totalItems += items.length;
-        const nextPageButton = page.getByRole('button').filter({ hasText: 'Next' }).first();
-        // const nextPageButton = await page.$(nextPageButtonSelector);
-        if (nextPageButton !== null && (options.maxResults === undefined || totalItems < options.maxResults!)) {
+        await page.waitForSelector(detailLinkSelector, { timeout: 15000 });
+        const urls = await page.$$eval(detailLinkSelector, (anchors) => anchors
+            .map((anchor) => anchor.getAttribute('href'))
+            .filter((href): href is string => Boolean(href))
+            .map((href) => new URL(href, 'https://www.google.com').toString()));
+
+        log.info(`Found ${urls.length} items on the page ${pageNumber}`);
+
+        if (urls.length === 0) {
+            break;
+        }
+
+        const remaining = options.maxResults === undefined ? urls.length : Math.max(options.maxResults - totalItems, 0);
+        const chunk = options.maxResults === undefined ? urls : urls.slice(0, remaining);
+
+        if (chunk.length > 0) {
+            await enqueueDetails(chunk);
+            totalItems += chunk.length;
+        }
+
+        const nextPageButton = page.getByRole('button', { name: 'Next' }).first();
+        const canPaginate = await nextPageButton.isEnabled().catch(() => false);
+
+        if (canPaginate) {
             await nextPageButton.click();
             await waitWhileGoogleLoading(page);
-            await page.waitForTimeout(1000);
             pageNumber++;
         } else {
             hasNextPage = false;
@@ -64,7 +74,6 @@ const fillInputForm = async (page: Page, options: GoogleHotelsOptions) => {
 
     await checkInElement.fill(options.checkInDate);
     await checkOutElement.click();
-    await page.waitForTimeout(1000);
     await checkOutElement.fill(options.checkOutDate);
     await checkOutElement.press('Enter');
 
@@ -73,28 +82,28 @@ const fillInputForm = async (page: Page, options: GoogleHotelsOptions) => {
 
     const peopleButton = await page.waitForSelector('div[role="button"][aria-label^="Number of travelers"]');
     await peopleButton.click();
-    await page.waitForTimeout(1000);
 
     let adults = DEFAULT_NUM_OF_ADULTS;
     let children = DEFAULT_NUM_OF_CHILDREN;
 
+    const removeAdultButton = page.locator('button[aria-label="Remove adult"]');
+    const addAdultButton = page.locator('button[aria-label="Add adult"]');
+    const removeChildButton = page.locator('button[aria-label="Remove child"]');
+    const addChildButton = page.locator('button[aria-label="Add child"]');
+
     while (adults > options.numberOfAdults && adults > 0) {
-        const removeAdultButton = await page.waitForSelector('button[aria-label="Remove adult"]');
         await removeAdultButton.click();
         adults--;
     }
     while (adults < options.numberOfAdults && (adults + children) <= MAX_NUM_OF_PEOPLE) {
-        const addAdultButton = await page.waitForSelector('button[aria-label="Add adult"]');
         await addAdultButton.click();
         adults++;
     }
     while (children > options.numberOfChildren && children >= 0) {
-        const removeChildButton = await page.waitForSelector('button[aria-label="Remove child"]');
         await removeChildButton.click();
         children--;
     }
     while (children < options.numberOfChildren && (adults + children) <= MAX_NUM_OF_PEOPLE) {
-        const addChildButton = await page.waitForSelector('button[aria-label="Add child"]');
         await addChildButton.click();
         children++;
     }
@@ -106,10 +115,10 @@ const fillInputForm = async (page: Page, options: GoogleHotelsOptions) => {
 
     const currencyButton = await page.waitForSelector('footer div c-wiz button');
     await currencyButton.click();
-    await page.waitForTimeout(1000);
     const requiredCurrency = options.currencyCode;
-    const currencyRadio = await page.waitForSelector(`div[role="radio"][data-value="${requiredCurrency.toUpperCase()}"]`);
+    const currencyDialog = await page.waitForSelector('div[aria-label="Select currency"]');
+    const currencyRadio = await currencyDialog.waitForSelector(`div[role="radio"][data-value="${requiredCurrency.toUpperCase()}"]`);
     await currencyRadio.click();
-    const currencyDoneButton = await page.waitForSelector('div[aria-label="Select currency"] > div:nth-of-type(3) > div:nth-of-type(2) > button');
+    const currencyDoneButton = await currencyDialog.waitForSelector('div:nth-of-type(3) > div:nth-of-type(2) > button');
     await currencyDoneButton.click();
 };

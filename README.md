@@ -117,6 +117,9 @@ Set parameters for specific date ranges, number of guests, and maximum results, 
 ### 4. **Optimized for High Volumes**
 Efficiently handles requests for high volumes of data without sacrificing performance. Perfect for businesses needing bulk hotel data or competitive pricing insights.
 
+### 5. **Production-Ready Performance Controls**
+New optional input knobs (`maxConcurrency`, `minConcurrency`, `maxRequestsPerMinute`, `requestHandlerTimeoutSecs`) let you balance crawl speed with resilience, making it easy to dial the scraper up or down for different network environments.
+
 ---
 
 ## 📈 Ideal Use Cases
@@ -145,4 +148,3 @@ At **QuickLife Solutions**, we specialize in providing advanced data scraping so
 ### Why QuickLife Solutions?
 
 Our tools are built for professionals who demand both performance and reliability. Whether you’re a developer, marketer, or analyst, we provide high-quality automation solutions that integrate seamlessly into your workflow. Let’s automate your success!
-
